@@ -1,58 +1,47 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-struct Student {
-    int rollno;
-    char name[50];
-    float marks;
+
+struct Box {
+    float length;
+    float width;
+    float height;
 };
 
-void parseString(const char* input, struct Student* students, int size) {
-    char* token;
-    char* rest = strdup(input);
-    int i = 0;
 
-    while ((token = strtok_r(rest, " ", &rest)) != NULL && i < size) {
-        switch (i % 3) {
-            case 0:
-                students[i / 3].rollno = atoi(token);
-                break;
-            case 1:
-                strncpy(students[i / 3].name, token, sizeof(students[i / 3].name));
-                break;
-            case 2:
-                students[i / 3].marks = atof(token);
-                break;
-        }
-        i++;
-    }
+float calculateVolume(struct Box* box) 
+{
+    return box->length * box->width * box->height;
+}
 
-    free(rest);
+
+float calculateSurfaceArea(struct Box* box) 
+{
+    return 2 * (box->length * box->width + box->width * box->height + box->height * box->length);
 }
 
 int main() {
-    int size;
-    printf("Enter the number of students: ");
-    scanf("%d", &size);
-    getchar(); // Clear the newline character from the input buffer
+    
+    struct Box box;
+    box.length = 4.5;
+    box.width = 2.7;
+    box.height = 3.8;
 
-    struct Student* students = (struct Student*)malloc(size * sizeof(struct Student));
+   
+    struct Box* boxPtr = &box;
+    float volume = (*boxPtr).length * (*boxPtr).width * (*boxPtr).height;
+    float surfaceArea = 2 * ((*boxPtr).length * (*boxPtr).width + (*boxPtr).width * (*boxPtr).height + (*boxPtr).height * (*boxPtr).length);
 
-    char input[100];
-    printf("Enter the student details:\n");
-    fgets(input, sizeof(input), stdin);
+    printf("Using pointer and dot operator:\n");
+    printf("Volume: %.2f\n", volume);
+    printf("Surface Area: %.2f\n", surfaceArea);
 
-    // Remove the trailing newline character from the input
-    input[strcspn(input, "\n")] = '\0';
+    
+    float volume2 = boxPtr->length * boxPtr->width * boxPtr->height;
+    float surfaceArea2 = 2 * (boxPtr->length * boxPtr->width + boxPtr->width * boxPtr->height + boxPtr->height * boxPtr->length);
 
-    parseString(input, students, size);
+    printf("\nUsing arrow operator:\n");
+    printf("Volume: %.2f\n", volume2);
+    printf("Surface Area: %.2f\n", surfaceArea2);
 
-    printf("Student details:\n");
-    for (int i = 0; i < size; i++) {
-        printf("Roll No: %d, Name: %s, Marks: %.2f\n", students[i].rollno, students[i].name, students[i].marks);
-    }
-
-    free(students);
     return 0;
 }

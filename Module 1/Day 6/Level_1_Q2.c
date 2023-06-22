@@ -1,68 +1,53 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-struct Student {
-    int rollno;
-    char name[20];
-    float marks;
+struct complex {
+    float real;
+    float imag;
 };
 
-void parseString(const char* input, struct Student* students, int size) {
-    char* token;
-    char* rest = strdup(input);
-    int i = 0;
-
-    while ((token = strtok_r(rest, " ", &rest)) != NULL && i < size) {
-        switch (i % 3) {
-            case 0:
-                students[i / 3].rollno = atoi(token);
-                break;
-            case 1:
-                strncpy(students[i / 3].name, token, sizeof(students[i / 3].name));
-                break;
-            case 2:
-                students[i / 3].marks = atof(token);
-                break;
-        }
-        i++;
-    }
-
-    free(rest);
+void read_complex(struct complex *c) {
+    printf("Enter the real part of the complex number: ");
+    scanf("%f", &c->real);
+    printf("Enter the imaginary part of the complex number: ");
+    scanf("%f", &c->imag);
 }
 
-void initializeStudents(struct Student* students, int size) {
-    for (int i = 0; i < size; i++) {
-        students[i].rollno = 0;
-        strcpy(students[i].name, "");
-        students[i].marks = 0.0;
-    }
+void write_complex(struct complex c) {
+    printf("The complex number is %.2f + %.2fi\n", c.real, c.imag);
+}
+
+struct complex add_complex(struct complex c1, struct complex c2) {
+    struct complex sum;
+    sum.real = c1.real + c2.real;
+    sum.imag = c1.imag + c2.imag;
+    return sum;
+}
+
+struct complex multiply_complex(struct complex c1, struct complex c2) {
+    struct complex product;
+    product.real = c1.real * c2.real - c1.imag * c2.imag;
+    product.imag = c1.real * c2.imag + c1.imag * c2.real;
+    return product;
 }
 
 int main() {
-    int size;
-    printf("Enter the number of students: ");
-    scanf("%d", &size);
-    getchar(); // Clear the newline character from the input buffer
+    struct complex c1, c2, sum, product;
+    printf("Enter the first complex number:\n");
+    read_complex(&c1);
 
-    struct Student* students = (struct Student*)malloc(size * sizeof(struct Student));
+    printf("Enter the second complex number:\n");
+    read_complex(&c2);
 
-    initializeStudents(students, size);
+    sum = add_complex(c1, c2);
 
-    char input[100];
-    printf("Enter the student details:\n");
-    fgets(input, sizeof(input), stdin);
+    printf("\nSum of the complex numbers:\n");
+    write_complex(sum);
 
-    // Remove the trailing newline character from the input
-    input[strcspn(input, "\n")] = '\0';
+   
+    product = multiply_complex(c1, c2);
 
-    parseString(input, students, size);
+    printf("\nProduct of the complex numbers:\n");
+    write_complex(product);
 
-    printf("Student details:\n");
-    for (int i = 0; i < size; i++) {
-        printf("Roll No: %d, Name: %s, Marks: %.2f\n", students[i].rollno, students[i].name, students[i].marks);
-    }
-
-    free(students);
     return 0;
 }
